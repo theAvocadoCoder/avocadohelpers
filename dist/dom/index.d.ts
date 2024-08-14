@@ -11,3 +11,4 @@ declare const _default: {
     style: typeof style;
 };
 export default _default;
+//# sourceMappingURL=index.d.ts.map

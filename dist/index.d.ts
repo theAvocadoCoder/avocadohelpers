@@ -4,3 +4,4 @@ declare const _: {
     style: typeof import("./dom/index").style;
 };
 export default _;
+//# sourceMappingURL=index.d.ts.map

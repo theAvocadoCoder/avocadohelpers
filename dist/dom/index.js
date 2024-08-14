@@ -21,3 +21,4 @@ export default {
     gIds,
     style,
 };
+//# sourceMappingURL=index.js.map

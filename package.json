@@ -1,6 +1,6 @@
 {
   "name": "avocadohelpers",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A library of helpful JavaScript utility and helper functions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,13 +8,17 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
   },
+  "files": [
+    "dist",
+    "README.MD",
+    "LICENSE"
+  ],
   "keywords": [
-    "helpers"
+    "helper", "helpers", "utility", "utilities"
   ],
   "author": "Kelechi Nwa-uwa",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.2.0",
     "typescript": "^5.5.4"
   }
 }
