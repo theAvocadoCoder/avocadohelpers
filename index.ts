@@ -1,4 +1,4 @@
-import domFunctions from "./dom";
+import domFunctions from "./dom/index";
 
 const _ = {
   ...domFunctions,
