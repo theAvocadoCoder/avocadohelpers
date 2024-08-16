@@ -1,12 +1,21 @@
-/***
+/**
  * DOM functions
  */
 
-import { StyleObject } from "./types";
 
-export const gId = (id: string) => document.getElementById(id);
+/**
+ * 
+ * @param id - The ID to search the DOM for
+ * @returns {HTMLElement | null} - The element with that ID or null if no element exists
+ */
+const gId = (id: string): HTMLElement | null => document.getElementById(id);
 
-export function gIds(...ids: string[]): (HTMLElement | null)[] {
+/**
+ * 
+ * @param ids - The IDs to search the DOM for 
+ * @returns {(HTMLElement | null)[]} - An array of elements with the IDs or null where no element exists
+ */
+export function getIds(...ids: string[]): (HTMLElement | null)[] {
   const idArray: (HTMLElement | null)[] = [];
   for (let i = 0; i < ids.length; i++) {
     idArray.push(gId(ids[i]));
@@ -14,16 +23,43 @@ export function gIds(...ids: string[]): (HTMLElement | null)[] {
   return idArray;
 }
 
-export function style(el: HTMLElement, styleObj: StyleObject) {
-  const entries = Object.entries(styleObj).filter(entry => !!entry[1]);
-  for (let i = 0; i < entries.length; i++) {
-    const property = entries[i][0];
-    (el.style as { [key: string]: any })[property] = entries[i][1]
+/**
+ * 
+ * @overload
+ * @param {HTMLElement} element 
+ * @param {CSSStyleDeclaration} styleObj
+ */
+
+/**
+ * 
+ * @overload
+ * @param {HTMLElement[]} elements 
+ * @param {CSSStyleDeclaration} styleObj
+ */
+export function style(element: HTMLElement, styleObj: CSSStyleDeclaration): void;
+export function style(elements: HTMLElement[], styleObj: CSSStyleDeclaration): void;
+
+/**
+ * 
+ * @param {HTMLElement | HTMLElement[]} element - The element(s) to be styled
+ * @param {CSSStyleDeclaration} styleObj - The styles to be applied to the element
+ */
+export function style(element: any, styleObj: CSSStyleDeclaration): void {
+  const stylesArr = Object.entries(styleObj).filter(entry => !!entry[1]);
+  for (let i = 0; i < stylesArr.length; i++) {
+    const property = stylesArr[i][0];
+
+    if (Array.isArray(element)) {
+      for (let j = 0; j < element.length; j++) {
+        (element[j].style as { [key: string]: any })[property] = stylesArr[i][1];
+      }
+    } else {
+      (element.style as { [key: string]: any })[property] = stylesArr[i][1];
+    }
   }
 }
 
 export default {
-  gId,
-  gIds,
+  getIds,
   style,
 };
