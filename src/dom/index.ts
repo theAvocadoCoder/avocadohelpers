@@ -59,7 +59,19 @@ export function style(element: any, styleObj: CSSStyleDeclaration): void {
   }
 }
 
+/**
+ * 
+ * @param {string} className - The desired className
+ * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
+ */
+export function addClass(className: string, elements: HTMLElement[] | HTMLCollection): void {
+  for (let i = 0; i < elements.length; i++) {
+      elements[i].classList.add(className);
+  }
+}
+
 export default {
   getIds,
   style,
+  addClass,
 };
