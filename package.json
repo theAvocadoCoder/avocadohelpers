@@ -14,11 +14,15 @@
     "LICENSE"
   ],
   "keywords": [
-    "helper", "helpers", "utility", "utilities"
+    "helper",
+    "helpers",
+    "utility",
+    "utilities"
   ],
   "author": "Kelechi Nwa-uwa",
   "license": "ISC",
   "devDependencies": {
+    "typedoc": "^0.26.5",
     "typescript": "^5.5.4"
   }
 }
