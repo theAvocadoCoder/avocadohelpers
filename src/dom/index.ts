@@ -70,8 +70,22 @@ export function addClass(className: string, elements: HTMLElement[] | HTMLCollec
   }
 }
 
+/**
+ * 
+ * @param {string} className - The desired className
+ * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
+ */
+export function removeClass(className: string, elements: HTMLElement[] | HTMLCollection): void {
+  for (let i = 0; i < elements.length; i++) {
+    elements[i].classList.remove(className);
+  }
+}
+
+export function toggleVisibility() {}
+
 export default {
   getIds,
   style,
   addClass,
+  removeClass,
 };
