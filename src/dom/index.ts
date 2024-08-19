@@ -2,6 +2,8 @@
  * DOM functions
  */
 
+import {htmlElementAttributes} from "html-element-attributes";
+
 
 /**
  * 
@@ -81,7 +83,40 @@ export function removeClass(className: string, elements: HTMLElement[] | HTMLCol
   }
 }
 
-export function toggleVisibility() {}
+export interface CreateElementOptions {
+  styles: CSSStyleDeclaration;
+  styleSheet: CSSStyleSheet;
+  id: string;
+}
+
+/**
+ * 
+ * @overload
+ * @param {K extends keyof HTMLElementTagNameMap} tagName - The tagName of the element
+ * @param {CreateElementOptions} options - Options for attributes, styles and children
+ */
+
+/**
+ * 
+ * @overload
+ * @param {string} tagName - The tagName of the element
+ * @param {CreateElementOptions} options - Options for attributes, styles and children
+ */
+export function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options: CreateElementOptions): HTMLElementTagNameMap[K];
+export function createElement(tagName: string, options: CreateElementOptions): HTMLElement {
+
+  const element = document.createElement(tagName);
+
+  let rules = "";
+
+  for (let i = 0; i < options.styles.length; i++) {
+    rules += `${options.styles[0]}`;
+  }
+
+  options.styleSheet.insertRule(`${options.id} { ${rules} }`)
+
+  return document.createElement(tagName)
+}
 
 export default {
   getIds,
