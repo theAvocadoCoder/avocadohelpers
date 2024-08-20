@@ -25,16 +25,16 @@ export function getIds(...ids) {
  * @param {CSSStyleDeclaration} styleObj - The styles to be applied to the element
  */
 export function style(element, styleObj) {
-    const entries = Object.entries(styleObj).filter(entry => !!entry[1]);
-    for (let i = 0; i < entries.length; i++) {
-        const property = entries[i][0];
+    const stylesArr = Object.entries(styleObj).filter(entry => !!entry[1]);
+    for (let i = 0; i < stylesArr.length; i++) {
+        const property = stylesArr[i][0];
         if (Array.isArray(element)) {
             for (let j = 0; j < element.length; j++) {
-                element[j].style[property] = entries[i][1];
+                element[j].style[property] = stylesArr[i][1];
             }
         }
         else {
-            element.style[property] = entries[i][1];
+            element.style[property] = stylesArr[i][1];
         }
     }
 }
@@ -58,7 +58,36 @@ export function removeClass(className, elements) {
         elements[i].classList.remove(className);
     }
 }
-export function toggleVisibility() { }
+export function createElement(tagName, options) {
+    const element = document.createElement(tagName);
+    if (!options)
+        return element;
+    // Add attributes if available
+    if (options.attributes) {
+        for (let i = 0; i < options.attributes.length; i++) {
+            let [property, value] = options.attributes[i];
+            element.setAttribute(property, value);
+        }
+    }
+    // TODO: Add styles if available
+    if (options.styles) {
+        let rules = "";
+        for (let i = 0; i < options.styles.length; i++) {
+            rules += `${options.styles[0]}`;
+        }
+        // TODO: Modify styleSheet if available
+        if (options.styleSheet) {
+            options.styleSheet.insertRule(`${options.id} { ${rules} }`);
+        }
+    }
+    // Add children if available
+    if (options.children) {
+        for (let i = 0; i < options.children.length; i++) {
+            element.appendChild(options.children[i]);
+        }
+    }
+    return element;
+}
 export default {
     getIds,
     style,

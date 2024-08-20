@@ -1,6 +1,7 @@
 /**
  * DOM functions
  */
+import { htmlElementAttributes } from "./types";
 /**
  *
  * @param ids - The IDs to search the DOM for
@@ -33,7 +34,34 @@ export declare function addClass(className: string, elements: HTMLElement[] | HT
  * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
  */
 export declare function removeClass(className: string, elements: HTMLElement[] | HTMLCollection): void;
-export declare function toggleVisibility(): void;
+type HTMLElementTypes = keyof htmlElementAttributes;
+type HTMLElementAttributesMap = {
+    [K in HTMLElementTypes]: htmlElementAttributes[K][number];
+};
+type ValidAttributes<E extends HTMLElementTypes> = HTMLElementAttributesMap[E];
+export interface CreateElementOptions {
+    attributes: [keyof ValidAttributes<HTMLElementTypes>, string][];
+    id?: string;
+    styles?: CSSStyleDeclaration;
+    styleSheet?: CSSStyleSheet;
+    children?: (HTMLElement | Node)[];
+}
+/**
+ *
+ * @overload
+ * @param {T extends keyof HTMLElementTagNameMap} tagName - The tagName of the element
+ * @param {CreateElementOptions} options - Options for attributes, styles and children
+ */
+/**
+ *
+ * @overload
+ * @param {string} tagName - The tagName of the element
+ * @param {CreateElementOptions} options - Options for attributes, styles and children
+ */
+export declare function createElement<T extends keyof HTMLElementTagNameMap>(tagName: T, options: {
+    attributes?: ValidAttributes<T>[];
+} & CreateElementOptions): HTMLElementTagNameMap[T];
+export declare function createElement(tagName: string, options: CreateElementOptions): HTMLElement;
 declare const _default: {
     getIds: typeof getIds;
     style: typeof style;
