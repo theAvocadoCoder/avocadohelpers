@@ -2,7 +2,7 @@
  * DOM functions
  */
 
-import {htmlElementAttributes} from "html-element-attributes";
+import {htmlElementAttributes} from "./types";
 
 
 /**
@@ -83,16 +83,26 @@ export function removeClass(className: string, elements: HTMLElement[] | HTMLCol
   }
 }
 
+type HTMLElementTypes = keyof htmlElementAttributes;
+
+type HTMLElementAttributesMap = {
+  [K in HTMLElementTypes]: htmlElementAttributes[K][number];
+}
+
+type ValidAttributes<E extends HTMLElementTypes> = HTMLElementAttributesMap[E];
+
 export interface CreateElementOptions {
-  styles: CSSStyleDeclaration;
-  styleSheet: CSSStyleSheet;
-  id: string;
+  attributes: [keyof ValidAttributes<HTMLElementTypes>, string][];
+  id?: string;
+  styles?: CSSStyleDeclaration;
+  styleSheet?: CSSStyleSheet;
+  children?: (HTMLElement | Node)[];
 }
 
 /**
  * 
  * @overload
- * @param {K extends keyof HTMLElementTagNameMap} tagName - The tagName of the element
+ * @param {T extends keyof HTMLElementTagNameMap} tagName - The tagName of the element
  * @param {CreateElementOptions} options - Options for attributes, styles and children
  */
 
@@ -102,20 +112,58 @@ export interface CreateElementOptions {
  * @param {string} tagName - The tagName of the element
  * @param {CreateElementOptions} options - Options for attributes, styles and children
  */
-export function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K, options: CreateElementOptions): HTMLElementTagNameMap[K];
+export function createElement<T extends keyof HTMLElementTagNameMap>(
+  tagName: T, 
+  options: {
+    attributes?: ValidAttributes<T>[],
+  } & CreateElementOptions
+): HTMLElementTagNameMap[T];
+export function createElement(tagName: string, options: CreateElementOptions): HTMLElement;
+
+
 export function createElement(tagName: string, options: CreateElementOptions): HTMLElement {
-
+  
   const element = document.createElement(tagName);
+  
+    if (!options) return element;
 
-  let rules = "";
+  // Add attributes if available
 
-  for (let i = 0; i < options.styles.length; i++) {
-    rules += `${options.styles[0]}`;
+  if (options.attributes) {
+    for (let i = 0; i < options.attributes.length; i++) {
+      let [property, value] = options.attributes[i] as [string, string];
+      element.setAttribute(property, value);
+    }
   }
 
-  options.styleSheet.insertRule(`${options.id} { ${rules} }`)
+  // TODO: Add styles if available
 
-  return document.createElement(tagName)
+  if (options.styles) {
+
+    let rules = "";
+  
+    for (let i = 0; i < options.styles.length; i++) {
+      rules += `${options.styles[0]}`;
+    }
+
+    // TODO: Modify styleSheet if available
+
+    if (options.styleSheet) {
+    
+      options.styleSheet.insertRule(`${options.id} { ${rules} }`)
+    }
+
+  }
+
+  // Add children if available
+
+  if (options.children) {
+    for (let i = 0; i < options.children.length; i++) {
+      element.appendChild(options.children[i]);
+    }
+  }
+
+  return element;
 }
 
 export default {
