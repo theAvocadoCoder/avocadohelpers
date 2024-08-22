@@ -23,20 +23,43 @@ export function getIds(...ids) {
  *
  * @param {HTMLElement | HTMLElement[]} element - The element(s) to be styled
  * @param {CSSStyleDeclaration} styleObj - The styles to be applied to the element
+ * @param {CSSStyleSheet} styleSheet - The stylesheet to add the rules to
  */
-export function style(element, styleObj) {
-    const stylesArr = Object.entries(styleObj).filter(entry => !!entry[1]);
-    for (let i = 0; i < stylesArr.length; i++) {
-        const property = stylesArr[i][0];
-        if (Array.isArray(element)) {
-            for (let j = 0; j < element.length; j++) {
-                element[j].style[property] = stylesArr[i][1];
-            }
-        }
-        else {
-            element.style[property] = stylesArr[i][1];
+export function style(element, styleObj, styleSheet = null) {
+    // The style function mutates the element because implementing a pure function with no side effects
+    // introduces too many edge cases that will limit will limit what the user can achieve with the function
+    // Convert HTMLCollection to Array so it's easier to work with
+    if (element instanceof HTMLCollection) {
+        element = Array.from(element);
+    }
+    // Create a new style element and get its stylesheet if none is provided
+    let styleElement = null;
+    if (styleSheet == null) {
+        styleElement = document.createElement("style");
+        // Create a unique id for the style element so it can easily be found in the dom
+        const tempElementIdentifier = Array.isArray(element) ? element[0] : element;
+        styleElement.id = `${tempElementIdentifier.tagName.toLowerCase() + (Array.isArray(element) ? "s" : "")}__${tempElementIdentifier.id || (Array.isArray(element) ?
+            element.length :
+            Math.ceil(Math.random() * 10000))}`;
+        document.head.appendChild(styleElement);
+        styleSheet = styleElement.sheet;
+    }
+    const rules = Object.entries(styleObj);
+    let properties = "";
+    // TODO: Transfer logic to string directory for use in case converter function
+    for (let i = 0; i < rules.length; i++) {
+        properties += `${rules[i][0].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}: ${rules[i][1]};\n`;
+    }
+    if (Array.isArray(element)) {
+        for (let i = 0; i < element.length; i++) {
+            styleSheet === null || styleSheet === void 0 ? void 0 : styleSheet.insertRule(`${element[i].tagName.toLowerCase()}{${properties}}`, styleSheet.cssRules.length);
         }
     }
+    else {
+        styleSheet === null || styleSheet === void 0 ? void 0 : styleSheet.insertRule(`${element.tagName.toLowerCase()}{${properties}}`, styleSheet.cssRules.length);
+    }
+    if (styleElement)
+        return styleElement.id;
 }
 /**
  *
@@ -44,6 +67,8 @@ export function style(element, styleObj) {
  * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
  */
 export function addClass(className, elements) {
+    // The addClass function mutates the element because implementing a pure function with no side effects
+    // introduces too many edge cases that will limit will limit what the user can achieve with the function
     for (let i = 0; i < elements.length; i++) {
         elements[i].classList.add(className);
     }
@@ -54,6 +79,8 @@ export function addClass(className, elements) {
  * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
  */
 export function removeClass(className, elements) {
+    // The removeClass function mutates the element because implementing a pure function with no side effects
+    // introduces too many edge cases that will limit will limit what the user can achieve with the function
     for (let i = 0; i < elements.length; i++) {
         elements[i].classList.remove(className);
     }
@@ -69,22 +96,20 @@ export function createElement(tagName, options) {
             element.setAttribute(property, value);
         }
     }
-    // TODO: Add styles if available
-    if (options.styles) {
-        let rules = "";
-        for (let i = 0; i < options.styles.length; i++) {
-            rules += `${options.styles[0]}`;
-        }
-        // TODO: Modify styleSheet if available
-        if (options.styleSheet) {
-            options.styleSheet.insertRule(`${options.id} { ${rules} }`);
-        }
-    }
     // Add children if available
     if (options.children) {
         for (let i = 0; i < options.children.length; i++) {
-            element.appendChild(options.children[i]);
+            if (options.children[i] instanceof Node || options.children[i] instanceof HTMLElement) {
+                element.appendChild(options.children[i]);
+            }
+            else {
+                element.appendChild(document.createTextNode(`${options.children[i]}`));
+            }
         }
+    }
+    // Add styles if available
+    if (options.styles) {
+        style(element, options.styles, options.styleSheet || null);
     }
     return element;
 }
@@ -93,5 +118,6 @@ export default {
     style,
     addClass,
     removeClass,
+    createElement,
 };
 //# sourceMappingURL=index.js.map

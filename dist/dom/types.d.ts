@@ -77,7 +77,5 @@ export type htmlElementAttributes = {
     track: 'default' | 'kind' | 'label' | 'src' | 'srclang';
     ul: 'compact' | 'type';
     video: 'autoplay' | 'controls' | 'crossorigin' | 'height' | 'loop' | 'muted' | 'playsinline' | 'poster' | 'preload' | 'src' | 'width';
-} & {
-    [K in keyof HTMLElementTagNameMap]: htmlElementAttributes['*'][number];
 };
 //# sourceMappingURL=types.d.ts.map
