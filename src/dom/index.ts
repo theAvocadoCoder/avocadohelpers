@@ -172,10 +172,9 @@ export function createElement<T extends keyof htmlElementAttributes>(
   
   const element = document.createElement(tagName);
   
-    if (!options) return element;
+  if (!options) return element;
 
   // Add attributes if available
-
   if (options.attributes) {
     for (let i = 0; i < options.attributes.length; i++) {
       let [property, value] = options.attributes[i] as [string, string];
@@ -183,31 +182,20 @@ export function createElement<T extends keyof htmlElementAttributes>(
     }
   }
 
-  // TODO: Add styles if available
-
-  if (options.styles) {
-
-    let rules = "";
-  
-    for (let i = 0; i < options.styles.length; i++) {
-      rules += `${options.styles[0]}`;
-    }
-
-    // TODO: Modify styleSheet if available
-
-    if (options.styleSheet) {
-    
-      options.styleSheet.insertRule(`${options.id} { ${rules} }`)
-    }
-
-  }
-
   // Add children if available
-
   if (options.children) {
     for (let i = 0; i < options.children.length; i++) {
-      element.appendChild(options.children[i]);
+      if (options.children[i] instanceof Node || options.children[i] instanceof HTMLElement) {
+        element.appendChild(options.children[i]);
+      } else {
+        element.appendChild(document.createTextNode(`${options.children[i]}`))
+      }
     }
+  }
+
+  // Add styles if available
+  if (options.styles) {
+    style(element, options.styles, options.styleSheet || null);
   }
 
   return element;
@@ -218,4 +206,5 @@ export default {
   style,
   addClass,
   removeClass,
+  createElement,
 };
