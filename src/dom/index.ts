@@ -30,6 +30,7 @@ export function getIds(...ids: string[]): (HTMLElement | null)[] {
  * @overload
  * @param {HTMLElement} element 
  * @param {CSSStyleDeclaration} styleObj
+ * @param {CSSStyleSheet} styleSheet
  */
 
 /**
@@ -37,28 +38,65 @@ export function getIds(...ids: string[]): (HTMLElement | null)[] {
  * @overload
  * @param {HTMLElement[]} elements 
  * @param {CSSStyleDeclaration} styleObj
+ * @param {CSSStyleSheet} styleSheet
  */
-export function style(element: HTMLElement, styleObj: CSSStyleDeclaration): void;
-export function style(elements: HTMLElement[], styleObj: CSSStyleDeclaration): void;
+export function style(element: HTMLElement, styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
+export function style(elements: HTMLElement[], styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
 
 /**
  * 
  * @param {HTMLElement | HTMLElement[]} element - The element(s) to be styled
  * @param {CSSStyleDeclaration} styleObj - The styles to be applied to the element
+ * @param {CSSStyleSheet} styleSheet - The stylesheet to add the rules to
  */
-export function style(element: any, styleObj: CSSStyleDeclaration): void {
-  const stylesArr = Object.entries(styleObj).filter(entry => !!entry[1]);
-  for (let i = 0; i < stylesArr.length; i++) {
-    const property = stylesArr[i][0];
+export function style(element: HTMLElement | HTMLElement[], styleObj: CSSStyleDeclaration, styleSheet: CSSStyleSheet | null = null): string | void {
+  // The style function mutates the element because implementing a pure function with no side effects
+  // introduces too many edge cases that will limit will limit what the user can achieve with the function
 
-    if (Array.isArray(element)) {
-      for (let j = 0; j < element.length; j++) {
-        (element[j].style as { [key: string]: any })[property] = stylesArr[i][1];
-      }
-    } else {
-      (element.style as { [key: string]: any })[property] = stylesArr[i][1];
-    }
+  // Convert HTMLCollection to Array so it's easier to work with
+  if (element instanceof HTMLCollection) {
+    element = Array.from(element as HTMLElement[]);
   }
+
+  // Create a new style element and get its stylesheet if none is provided
+  let styleElement = null;
+  
+  if (styleSheet == null) {
+    styleElement = document.createElement("style");
+    // Create a unique id for the style element so it can easily be found in the dom
+    const tempElementIdentifier = Array.isArray(element) ? element[0] : element;
+    styleElement.id = `${
+      tempElementIdentifier.tagName.toLowerCase() + (Array.isArray(element) ? "s" : "")
+    }__${
+      tempElementIdentifier.id || (
+        Array.isArray(element) ? 
+          element.length :
+          Math.ceil(Math.random() * 10_000)
+      )
+    }`
+    document.head.appendChild(styleElement);
+
+    styleSheet = styleElement.sheet;
+  }
+
+  const rules = Object.entries(styleObj);
+
+  let properties = "";
+
+  // TODO: Transfer logic to string directory for use in case converter function
+  for (let i = 0; i < rules.length; i++) {
+    properties += `${rules[i][0].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}: ${rules[i][1]};\n`
+  }
+
+  if (Array.isArray(element)) {
+    for (let i = 0; i < element.length; i++) {
+      styleSheet?.insertRule(`${element[i].tagName.toLowerCase()}{${properties}}`, styleSheet.cssRules.length);
+    }
+  } else {
+    styleSheet?.insertRule(`${element.tagName.toLowerCase()}{${properties}}`, styleSheet.cssRules.length);
+  }
+
+  if (styleElement) return styleElement.id;
 }
 
 /**
@@ -67,6 +105,8 @@ export function style(element: any, styleObj: CSSStyleDeclaration): void {
  * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
  */
 export function addClass(className: string, elements: HTMLElement[] | HTMLCollection): void {
+  // The addClass function mutates the element because implementing a pure function with no side effects
+  // introduces too many edge cases that will limit will limit what the user can achieve with the function
   for (let i = 0; i < elements.length; i++) {
       elements[i].classList.add(className);
   }
@@ -78,6 +118,8 @@ export function addClass(className: string, elements: HTMLElement[] | HTMLCollec
  * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
  */
 export function removeClass(className: string, elements: HTMLElement[] | HTMLCollection): void {
+  // The removeClass function mutates the element because implementing a pure function with no side effects
+  // introduces too many edge cases that will limit will limit what the user can achieve with the function
   for (let i = 0; i < elements.length; i++) {
     elements[i].classList.remove(className);
   }
