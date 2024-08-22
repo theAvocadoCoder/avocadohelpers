@@ -125,26 +125,17 @@ export function removeClass(className: string, elements: HTMLElement[] | HTMLCol
   }
 }
 
-type HTMLElementTypes = keyof htmlElementAttributes;
-
-type HTMLElementAttributesMap = {
-  [K in HTMLElementTypes]: htmlElementAttributes[K][number];
-}
-
-type ValidAttributes<E extends HTMLElementTypes> = HTMLElementAttributesMap[E];
-
-export interface CreateElementOptions {
-  attributes: [keyof ValidAttributes<HTMLElementTypes>, string][];
-  id?: string;
+export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
+  attributes?: [htmlElementAttributes[`${T}` | "*"], string][];
+  children?: (HTMLElement | Node)[];
   styles?: CSSStyleDeclaration;
   styleSheet?: CSSStyleSheet;
-  children?: (HTMLElement | Node)[];
 }
 
 /**
  * 
  * @overload
- * @param {T extends keyof HTMLElementTagNameMap} tagName - The tagName of the element
+ * @param {T extends keyof htmlElementAttributes} tagName - The tagName of the element
  * @param {CreateElementOptions} options - Options for attributes, styles and children
  */
 
@@ -154,16 +145,30 @@ export interface CreateElementOptions {
  * @param {string} tagName - The tagName of the element
  * @param {CreateElementOptions} options - Options for attributes, styles and children
  */
-export function createElement<T extends keyof HTMLElementTagNameMap>(
+export function createElement<T extends keyof htmlElementAttributes>(
   tagName: T, 
   options: {
-    attributes?: ValidAttributes<T>[],
-  } & CreateElementOptions
-): HTMLElementTagNameMap[T];
-export function createElement(tagName: string, options: CreateElementOptions): HTMLElement;
+    attributes?: [htmlElementAttributes[`${T}` | "*"], string][],
+    children?: (HTMLElement | Node)[];
+    styles?: CSSStyleDeclaration;
+    styleSheet?: CSSStyleSheet;
+  }
+): HTMLElement;
+export function createElement(
+  tagName: string,
+  options: {
+    attributes?: [htmlElementAttributes[`${keyof htmlElementAttributes}` | "*"], string][],
+    children?: (HTMLElement | Node)[];
+    styles?: CSSStyleDeclaration;
+    styleSheet?: CSSStyleSheet;
+  }
+): HTMLElement;
 
 
-export function createElement(tagName: string, options: CreateElementOptions): HTMLElement {
+export function createElement<T extends keyof htmlElementAttributes>(
+  tagName: T | string, 
+  options: CreateElementOptions<T>
+): HTMLElement {
   
   const element = document.createElement(tagName);
   

@@ -389,7 +389,4 @@ export type htmlElementAttributes = {
     'preload' |
     'src' |
     'width'
-  
-} & {
-  [K in keyof HTMLElementTagNameMap]: htmlElementAttributes['*'][number];
 }
