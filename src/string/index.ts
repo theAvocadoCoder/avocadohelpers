@@ -3,6 +3,7 @@
  */
 
 export type StringCase = "camel" | "kebab" | "pascal" | "snake";
+export type Separator = string | string[] | RegExp;
 
 /**
  * 
@@ -11,14 +12,20 @@ export type StringCase = "camel" | "kebab" | "pascal" | "snake";
  * @returns {string} The converted string
  */
 
-export function convertCase(string: string, to: StringCase): string {
+export function convertCase(string: string, to: StringCase, separator?: Separator): string {
 
-  let searchString = /^[A-Z]|^[a-z]|[A-Z]|-[a-z]|_[a-z]/g,
-    replaceString = (c: string) => {return c};
-
-  
+  let searchString = separator 
+    ? separator instanceof RegExp
+    ? separator
+    : new RegExp(`${
+        Array.isArray(separator) 
+          ? separator.join("|")
+          : separator
+      }`, 'g') 
+    : /^[A-Z]|^[a-z]|[A-Z]|-[a-z]|_[a-z]| [A-Z]| [a-z]/g,
+  replaceString = (c: string) => {return c};
   switch (to) {
-    case "kebab":
+    case "camel":
       replaceString = (c: string) => {
         if (string[0] === c) return c.toLocaleLowerCase();
         return c[c.length - 1].toLocaleUpperCase();
@@ -26,6 +33,7 @@ export function convertCase(string: string, to: StringCase): string {
       break;
     case "kebab":
       replaceString = (c: string) => {
+        if (string[0] === c) return c.toLocaleLowerCase();
         return `-${c[c.length - 1].toLocaleLowerCase()}`;
       };
       break;
@@ -36,6 +44,7 @@ export function convertCase(string: string, to: StringCase): string {
       break;
     case "snake":
       replaceString = (c: string) => {
+        if (string[0] === c) return c.toLocaleLowerCase();
         return `_${c[c.length - 1].toLocaleLowerCase()}`;
       };
       break;
