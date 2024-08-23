@@ -2,13 +2,14 @@
  * String Functions
  */
 export type StringCase = "camel" | "kebab" | "pascal" | "snake";
+export type Separator = string | string[] | RegExp;
 /**
  *
  * @param {string} string The string to be converted
  * @param {StringCase} to The case to convert the string to
  * @returns {string} The converted string
  */
-export declare function convertCase(string: string, to: StringCase): string;
+export declare function convertCase(string: string, to: StringCase, separator?: Separator): string;
 declare const _default: {
     convertCase: typeof convertCase;
 };
