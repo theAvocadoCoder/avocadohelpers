@@ -1,7 +1,7 @@
 /**
  * String Functions
  */
-export type StringCase = "camel" | "kebab" | "pascal" | "snake";
+export type StringCase = "camel" | "kebab" | "pascal" | "snake" | "screamingSnake";
 export type Separator = string | RegExp;
 /**
  *
