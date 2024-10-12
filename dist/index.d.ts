@@ -1,4 +1,5 @@
 declare const _: {
+    debounce: typeof import("./utils/index").debounce;
     convertCase: typeof import("./string/index").convertCase;
     getIds: typeof import("./dom/index").getIds;
     style: typeof import("./dom/index").style;
