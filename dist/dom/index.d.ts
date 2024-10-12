@@ -3,12 +3,14 @@
  */
 import { htmlElementAttributes } from "./types";
 /**
+ * Get multiple elements by their ID
  *
  * @param ids - The IDs to search the DOM for
  * @returns {(HTMLElement | null)[]} - An array of elements with the IDs or null where no element exists
  */
 export declare function getIds(...ids: string[]): (HTMLElement | null)[];
 /**
+ * Create a stylesheet to style a single element element
  *
  * @overload
  * @param {HTMLElement} element
@@ -16,6 +18,7 @@ export declare function getIds(...ids: string[]): (HTMLElement | null)[];
  * @param {CSSStyleSheet} styleSheet
  */
 /**
+ * Create a stylesheet to style multiple elements
  *
  * @overload
  * @param {HTMLElement[]} elements
@@ -25,12 +28,14 @@ export declare function getIds(...ids: string[]): (HTMLElement | null)[];
 export declare function style(element: HTMLElement, styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
 export declare function style(elements: HTMLElement[], styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
 /**
+ * Add a class to multiple elements at once
  *
  * @param {string} className - The desired className
  * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
  */
 export declare function addClass(className: string, elements: HTMLElement[] | HTMLCollection): void;
 /**
+ * Remove a class from multiple elements at once
  *
  * @param {string} className - The desired className
  * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
@@ -43,12 +48,14 @@ export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
     styleSheet?: CSSStyleSheet;
 }
 /**
+ * Create a HTML element
  *
  * @overload
  * @param {T extends keyof htmlElementAttributes} tagName - The tagName of the element
  * @param {CreateElementOptions} options - Options for attributes, styles and children
  */
 /**
+ * Create a custom HTML element
  *
  * @overload
  * @param {string} tagName - The tagName of the element
