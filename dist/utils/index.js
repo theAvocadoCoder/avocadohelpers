@@ -4,8 +4,8 @@
 /***********************************
 * Debounce a function
 *
-* @param {(any: any) => any} func the function
-* @param {number?} delay the amount of time to wait before function can be run again
+* @param {(any: any) => any} func the function to be called
+* @param {number} delay the amount of time to wait before calling the function
 */
 export function debounce(func, delay) {
     let timeoutId;
@@ -17,7 +17,24 @@ export function debounce(func, delay) {
         }, delay);
     };
 }
+/************************************
+ * Throttle a function
+ *
+ * @param {(any: any) => any} func the function to be called
+ * @param {number} pause the time to wait after execution before function can be called again
+ */
+export function throttle(func, pause) {
+    let isThrottling;
+    return function (...args) {
+        if (!isThrottling) {
+            func.apply(this, args);
+            isThrottling = true;
+            setTimeout(() => (isThrottling = false), pause);
+        }
+    };
+}
 export default {
-    debounce
+    debounce,
+    throttle,
 };
 //# sourceMappingURL=index.js.map
