@@ -1,6 +1,7 @@
 declare const _: {
     debounce: typeof import("./utils/index").debounce;
     throttle: typeof import("./utils/index").throttle;
+    memoize: import("./utils/index").MemoType;
     convertCase: typeof import("./string/index").convertCase;
     getIds: typeof import("./dom/index").getIds;
     style: typeof import("./dom/index").style;

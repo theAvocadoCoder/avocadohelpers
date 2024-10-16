@@ -33,8 +33,24 @@ export function throttle(func, pause) {
         }
     };
 }
+/**************************************
+ * Memoize a function
+ *
+ * @param func the pure function to be memoized
+ */
+export const memoize = function (func) {
+    if (!memoize.cache)
+        memoize.cache = new Map();
+    return function (...args) {
+        var _a, _b, _c;
+        if (!((_a = memoize.cache) === null || _a === void 0 ? void 0 : _a.has(args)))
+            (_b = memoize.cache) === null || _b === void 0 ? void 0 : _b.set(Symbol.for(JSON.stringify(args)), func.apply(this, args));
+        return (_c = memoize.cache) === null || _c === void 0 ? void 0 : _c.get(Symbol.for(JSON.stringify(args)));
+    };
+};
 export default {
     debounce,
     throttle,
+    memoize,
 };
 //# sourceMappingURL=index.js.map
