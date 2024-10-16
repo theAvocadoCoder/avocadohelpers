@@ -20,6 +20,7 @@ export function debounce<T extends (...args: any[]) => any>(func: T, delay: numb
   }
 }
 
+
 /************************************
  * Throttle a function
  * 
@@ -48,8 +49,37 @@ export function throttle<
 }
 
 
+export type GenericFunction = (...args: any[]) => any 
+
+export interface MemoType {
+  ( func: GenericFunction ): ( this: any, ...args: Parameters<GenericFunction> ) => any;
+  cache?: Map<any, any>;
+}
+
+/**************************************
+ * Memoize a function
+ * 
+ * @param func the pure function to be memoized
+ */
+export const memoize: MemoType = function (func: (...args: any[]) => any): any {
+  if (!memoize.cache) memoize.cache = new Map();
+
+  return function(this: any, ...args: any[]) {
+
+    if (!memoize.cache?.has(args)) memoize.cache?.set(
+      Symbol.for(JSON.stringify(args)),
+      func.apply(this, args)
+    );
+
+    return memoize.cache?.get(Symbol.for(JSON.stringify(args)));
+  }
+}
+
+
+
 
 export default {
   debounce,
   throttle,
+  memoize,
 }
