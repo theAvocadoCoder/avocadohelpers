@@ -27,12 +27,14 @@ export function getIds(...ids: string[]): (HTMLElement | null)[] {
   return idArray;
 }
 
+export type IterableElements = HTMLElement[] | NodeListOf<HTMLElement> | HTMLCollection;
+
 /**
  * Create a stylesheet to style a single element element
  * 
  * @overload
  * @param {HTMLElement} element 
- * @param {CSSStyleDeclaration} styleObj
+ * @param {Partial<CSSStyleDeclaration>} styleObj
  * @param {CSSStyleSheet} styleSheet
  */
 
@@ -40,21 +42,21 @@ export function getIds(...ids: string[]): (HTMLElement | null)[] {
  * Create a stylesheet to style multiple elements
  * 
  * @overload
- * @param {HTMLElement[]} elements 
- * @param {CSSStyleDeclaration} styleObj
+ * @param {IterableElements} elements 
+ * @param {Partial<CSSStyleDeclaration>} styleObj
  * @param {CSSStyleSheet} styleSheet
  */
-export function style(element: HTMLElement, styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
-export function style(elements: HTMLElement[], styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
+export function style(element: HTMLElement, styleObj: Partial<CSSStyleDeclaration>, styleSheet?: CSSStyleSheet | null): string | void;
+export function style(elements: IterableElements, styleObj: Partial<CSSStyleDeclaration>, styleSheet?: CSSStyleSheet | null): string | void;
 
 /**
  * Create a stylesheet to style a single element or multiple elements
  * 
- * @param {HTMLElement | HTMLElement[]} element - The element(s) to be styled
- * @param {CSSStyleDeclaration} styleObj - The styles to be applied to the element
+ * @param {HTMLElement | IterableElements} element - The element(s) to be styled
+ * @param {Partial<CSSStyleDeclaration>} styleObj - The styles to be applied to the element
  * @param {CSSStyleSheet} styleSheet - The stylesheet to add the rules to
  */
-export function style(element: HTMLElement | HTMLElement[], styleObj: CSSStyleDeclaration, styleSheet: CSSStyleSheet | null = null): string | void {
+export function style(element: HTMLElement | IterableElements, styleObj: Partial<CSSStyleDeclaration>, styleSheet: CSSStyleSheet | null = null): string | void {
   // The style function mutates the element because implementing a pure function with no side effects
   // introduces too many edge cases that will limit what the user can achieve with the function
 
@@ -62,8 +64,8 @@ export function style(element: HTMLElement | HTMLElement[], styleObj: CSSStyleDe
   // decide whether to style all elements with that tag or just the specific one provided
 
   // Convert HTMLCollection to Array so it's easier to work with
-  if (element instanceof HTMLCollection) {
-    element = Array.from(element as HTMLElement[]);
+  if (! (element instanceof HTMLElement)) {
+    element = Array.from(element) as HTMLElement[];
   }
 
   // Create a new style element and get its stylesheet if none is provided
@@ -115,9 +117,9 @@ export function style(element: HTMLElement | HTMLElement[], styleObj: CSSStyleDe
  * Add a class to multiple elements at once
  * 
  * @param {string} className - The desired className
- * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
+ * @param {IterableElements} elements - The elements to add the className to
  */
-export function addClass(className: string, elements: HTMLElement[] | HTMLCollection): void {
+export function addClass(className: string, elements: IterableElements): void {
   // The addClass function mutates the element because implementing a pure function with no side effects
   // introduces too many edge cases that will limit will limit what the user can achieve with the function
   for (let i = 0; i < elements.length; i++) {
@@ -129,15 +131,17 @@ export function addClass(className: string, elements: HTMLElement[] | HTMLCollec
  * Remove a class from multiple elements at once
  * 
  * @param {string} className - The desired className
- * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
+ * @param {IterableElements} elements - The elements to remove the className from
  */
-export function removeClass(className: string, elements: HTMLElement[] | HTMLCollection): void {
+export function removeClass(className: string, elements: IterableElements): void {
   // The removeClass function mutates the element because implementing a pure function with no side effects
   // introduces too many edge cases that will limit will limit what the user can achieve with the function
   for (let i = 0; i < elements.length; i++) {
     elements[i].classList.remove(className);
   }
 }
+
+// TODO: Implement toggleClass function
 
 export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
   attributes?: [htmlElementAttributes[`${T}` | "*"], string][];
@@ -170,6 +174,7 @@ export function createElement<T extends keyof htmlElementAttributes>(
     styleSheet?: CSSStyleSheet;
   }
 ): HTMLElement;
+
 export function createElement(
   tagName: string,
   options: {
