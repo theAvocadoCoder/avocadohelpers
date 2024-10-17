@@ -9,38 +9,39 @@ import { htmlElementAttributes } from "./types";
  * @returns {(HTMLElement | null)[]} - An array of elements with the IDs or null where no element exists
  */
 export declare function getIds(...ids: string[]): (HTMLElement | null)[];
+export type IterableElements = HTMLElement[] | NodeListOf<HTMLElement> | HTMLCollection;
 /**
  * Create a stylesheet to style a single element element
  *
  * @overload
  * @param {HTMLElement} element
- * @param {CSSStyleDeclaration} styleObj
+ * @param {Partial<CSSStyleDeclaration>} styleObj
  * @param {CSSStyleSheet} styleSheet
  */
 /**
  * Create a stylesheet to style multiple elements
  *
  * @overload
- * @param {HTMLElement[]} elements
- * @param {CSSStyleDeclaration} styleObj
+ * @param {IterableElements} elements
+ * @param {Partial<CSSStyleDeclaration>} styleObj
  * @param {CSSStyleSheet} styleSheet
  */
-export declare function style(element: HTMLElement, styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
-export declare function style(elements: HTMLElement[], styleObj: CSSStyleDeclaration, styleSheet?: CSSStyleSheet | null): string | void;
+export declare function style(element: HTMLElement, styleObj: Partial<CSSStyleDeclaration>, styleSheet?: CSSStyleSheet | null): string | void;
+export declare function style(elements: IterableElements, styleObj: Partial<CSSStyleDeclaration>, styleSheet?: CSSStyleSheet | null): string | void;
 /**
  * Add a class to multiple elements at once
  *
  * @param {string} className - The desired className
- * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
+ * @param {IterableElements} elements - The elements to add the className to
  */
-export declare function addClass(className: string, elements: HTMLElement[] | HTMLCollection): void;
+export declare function addClass(className: string, elements: IterableElements): void;
 /**
  * Remove a class from multiple elements at once
  *
  * @param {string} className - The desired className
- * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
+ * @param {IterableElements} elements - The elements to remove the className from
  */
-export declare function removeClass(className: string, elements: HTMLElement[] | HTMLCollection): void;
+export declare function removeClass(className: string, elements: IterableElements): void;
 export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
     attributes?: [htmlElementAttributes[`${T}` | "*"], string][];
     children?: (HTMLElement | Node)[];
