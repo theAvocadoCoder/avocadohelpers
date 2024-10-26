@@ -146,7 +146,7 @@ export function removeClass(className: string, elements: IterableElements): void
 export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
   attributes?: [htmlElementAttributes[`${T}` | "*"], string][];
   children?: (HTMLElement | Node)[];
-  styles?: CSSStyleDeclaration;
+  styles?: Partial<CSSStyleDeclaration>;
   styleSheet?: CSSStyleSheet;
 }
 
@@ -170,7 +170,7 @@ export function createElement<T extends keyof htmlElementAttributes>(
   options: {
     attributes?: [htmlElementAttributes[`${T}` | "*"], string][],
     children?: (HTMLElement | Node)[];
-    styles?: CSSStyleDeclaration;
+    styles?: Partial<CSSStyleDeclaration>;
     styleSheet?: CSSStyleSheet;
   }
 ): HTMLElement;
@@ -180,7 +180,7 @@ export function createElement(
   options: {
     attributes?: [htmlElementAttributes[`${keyof htmlElementAttributes}` | "*"], string][],
     children?: (HTMLElement | Node)[];
-    styles?: CSSStyleDeclaration;
+    styles?: Partial<CSSStyleDeclaration>;
     styleSheet?: CSSStyleSheet;
   }
 ): HTMLElement;
