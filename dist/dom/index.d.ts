@@ -45,7 +45,7 @@ export declare function removeClass(className: string, elements: IterableElement
 export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
     attributes?: [htmlElementAttributes[`${T}` | "*"], string][];
     children?: (HTMLElement | Node)[];
-    styles?: CSSStyleDeclaration;
+    styles?: Partial<CSSStyleDeclaration>;
     styleSheet?: CSSStyleSheet;
 }
 /**
@@ -65,13 +65,13 @@ export interface CreateElementOptions<T extends keyof htmlElementAttributes> {
 export declare function createElement<T extends keyof htmlElementAttributes>(tagName: T, options: {
     attributes?: [htmlElementAttributes[`${T}` | "*"], string][];
     children?: (HTMLElement | Node)[];
-    styles?: CSSStyleDeclaration;
+    styles?: Partial<CSSStyleDeclaration>;
     styleSheet?: CSSStyleSheet;
 }): HTMLElement;
 export declare function createElement(tagName: string, options: {
     attributes?: [htmlElementAttributes[`${keyof htmlElementAttributes}` | "*"], string][];
     children?: (HTMLElement | Node)[];
-    styles?: CSSStyleDeclaration;
+    styles?: Partial<CSSStyleDeclaration>;
     styleSheet?: CSSStyleSheet;
 }): HTMLElement;
 declare const _default: {
