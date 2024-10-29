@@ -1,7 +1,8 @@
 /**
  * String Functions
  */
-export type StringCase = "camel" | "kebab" | "pascal" | "snake" | "screamingSnake";
+declare const stringCases: readonly ["camel", "kebab", "pascal", "snake", "screamingSnake", "title", "sentence", "invertedTitle"];
+export type StringCase = typeof stringCases[number];
 export type Separator = string | RegExp;
 /**
  *
