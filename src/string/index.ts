@@ -2,7 +2,12 @@
  * String Functions
  */
 
-export type StringCase = "camel" | "kebab" | "pascal" | "snake" | "screamingSnake";
+const stringCases = [
+  "camel", "kebab", "pascal", "snake", "screamingSnake",
+  "title", "sentence", "invertedTitle"
+] as const;
+
+export type StringCase = typeof stringCases[number];
 export type Separator = string | RegExp;
 
 /**
@@ -15,8 +20,12 @@ export type Separator = string | RegExp;
 
 export function convertCase(string: string, to: StringCase, separator?: Separator): string {
   if (typeof string !== "string") throw new Error(`Invalid argument. ${string} is not a string.`);
-  if (!["kebab","camel","pascal","snake", "screamingSnake"].includes(to)) throw new Error(`Invalid argument. ${to} is not a valid string case.`);
-  if (separator && typeof separator !== "string" && !(separator instanceof RegExp)) throw new Error(`Invalid argument. ${separator} is not a string or regular expression.`);
+  if (!stringCases.includes(to)) throw new Error(`Invalid argument. ${to} is not a valid string case.`);
+  if (
+    separator && 
+    typeof separator !== "string" && 
+    !(separator instanceof RegExp)
+  ) throw new Error(`Invalid argument. ${separator} is not a string or regular expression.`);
 
   const separatorIsString = !!separator && typeof separator === "string";
 
@@ -24,10 +33,10 @@ export function convertCase(string: string, to: StringCase, separator?: Separato
 
   let searchString = separator 
     ? separatorIsString
-      ? new RegExp(`^[a-z]|^[A-Z]|${sanitizedSeparator}[a-z]|${sanitizedSeparator}[A-Z]`, "g")
-      : new RegExp(`^[a-z]|^[A-Z]|${(separator as RegExp).source}[a-z]|${(separator as RegExp).source}[A-Z]`, "g")
-    : /^[a-z]|^[A-Z]|[A-Z]|-[a-z]|_[a-z]| [A-Z]| [a-z]/g;
-  let replaceString = (c: string, offset?: number) => {return c};
+      ? new RegExp(`^[a-zA-Z]|${sanitizedSeparator}[a-zA-Z]`, "g")
+      : new RegExp(`^[a-zA-Z]|${(separator as RegExp).source}[a-zA-Z]`, "g")
+    : /^[a-zA-Z]|[A-Z]|[-_ ][a-zA-Z]/g;
+  let replaceString = (c: string, offset?: number) => {return c.toLocaleLowerCase()};
 
   switch (to) {
     case "camel":
@@ -35,35 +44,75 @@ export function convertCase(string: string, to: StringCase, separator?: Separato
         if (offset === 0) return c[c.length - 1].toLocaleLowerCase();
         return c[c.length - 1].toLocaleUpperCase();
       };
-      break;
+      return string.toLocaleLowerCase().replace(searchString, replaceString);
+
     case "kebab":
       replaceString = (c: string, offset?: number) => {
         if (offset === 0) return c[c.length - 1].toLocaleLowerCase();
         return `-${c[c.length - 1].toLocaleLowerCase()}`;
       };
-      break;
+      return string.toLocaleLowerCase().replace(searchString, replaceString);
+
     case "pascal":
       replaceString = (c: string) => {
         return c[c.length - 1].toLocaleUpperCase();
       };
-      break;
+      return string.toLocaleLowerCase().replace(searchString, replaceString);
+
     case "snake":
       replaceString = (c: string, offset?: number) => {
         if (offset == 0) return c[c.length - 1].toLocaleLowerCase();
         return `_${c[c.length - 1].toLocaleLowerCase()}`;
       };
-      break;
+      return string.toLocaleLowerCase().replace(searchString, replaceString);
+
     case "screamingSnake":
       replaceString = (c: string, offset?: number) => {
         if (offset == 0) return c[c.length - 1].toLocaleUpperCase();
         return `_${c[c.length - 1].toLocaleUpperCase()}`;
+      };
+      return string
+        .toLocaleLowerCase()
+        .replace(searchString, replaceString)
+        .toLocaleUpperCase();
+
+    case "title":
+      replaceString = (c: string, offset?: number) => {
+        if (offset == 0) return c[c.length - 1].toLocaleUpperCase();
+        return ` ${c[c.length - 1].toLocaleUpperCase()}`;
       }
-      break;
+      return string.toLocaleLowerCase().replace(searchString, replaceString);
+
+    case "sentence":
+      replaceString = (c: string, offset?: number) => {
+        if (offset == 0) return c[c.length - 1].toLocaleUpperCase();
+        return ` ${c[c.length - 1].toLocaleLowerCase()}`;
+      }
+      return string
+        .toLocaleLowerCase()
+        .replace(searchString, replaceString);
+    
+    
+    case "invertedTitle":
+      replaceString = (c: string, offset?: number) => {
+        let _c = c;
+        if (offset == 0 || c.length > 1) _c = c[c.length - 1].toLocaleLowerCase();
+        return `${
+          c.length > 1 ? " " : ""
+        }${_c}`;
+      }
+      return string
+        .toLocaleUpperCase()
+        .replace(searchString, replaceString);
+
+    default:
+      return string.replace(searchString, replaceString);
   }
 
-  return string.replace(searchString, replaceString);
-
 }
+
+// TODO: Other case convert functions 
+// specifically for inter-variable-case conversions
 
 export default {
   convertCase,
