@@ -9,7 +9,7 @@
 * @param {number} delay the amount of time to wait before calling the function
 */
 export function debounce<T extends (...args: any[]) => any>(func: T, delay: number): (this: any, ...args: Parameters<T>) => void {
-  let timeoutId: number;
+  let timeoutId: any;
   
   return function(this: any, ...args: Parameters<T>) {
     if (timeoutId) clearTimeout(timeoutId);

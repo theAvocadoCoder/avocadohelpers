@@ -25,8 +25,8 @@ export function getIds(...ids) {
 /**
  * Create a stylesheet to style a single element or multiple elements
  *
- * @param {HTMLElement | HTMLElement[]} element - The element(s) to be styled
- * @param {CSSStyleDeclaration} styleObj - The styles to be applied to the element
+ * @param {HTMLElement | IterableElements} element - The element(s) to be styled
+ * @param {Partial<CSSStyleDeclaration>} styleObj - The styles to be applied to the element
  * @param {CSSStyleSheet} styleSheet - The stylesheet to add the rules to
  */
 export function style(element, styleObj, styleSheet = null) {
@@ -35,7 +35,7 @@ export function style(element, styleObj, styleSheet = null) {
     // TODO: The function currently styles all elements with the tag provided. Make it so the user can
     // decide whether to style all elements with that tag or just the specific one provided
     // Convert HTMLCollection to Array so it's easier to work with
-    if (element instanceof HTMLCollection) {
+    if (!(element instanceof HTMLElement)) {
         element = Array.from(element);
     }
     // Create a new style element and get its stylesheet if none is provided
@@ -74,7 +74,7 @@ export function style(element, styleObj, styleSheet = null) {
  * Add a class to multiple elements at once
  *
  * @param {string} className - The desired className
- * @param {HTMLElement[] | HTMLCollection} elements - The elements to add the className to
+ * @param {IterableElements} elements - The elements to add the className to
  */
 export function addClass(className, elements) {
     // The addClass function mutates the element because implementing a pure function with no side effects
@@ -87,7 +87,7 @@ export function addClass(className, elements) {
  * Remove a class from multiple elements at once
  *
  * @param {string} className - The desired className
- * @param {HTMLElemet[] | HTMLCollection} elements - The elements to remove the className from
+ * @param {IterableElements} elements - The elements to remove the className from
  */
 export function removeClass(className, elements) {
     // The removeClass function mutates the element because implementing a pure function with no side effects
